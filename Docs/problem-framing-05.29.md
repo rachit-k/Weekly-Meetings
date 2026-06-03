@@ -91,10 +91,11 @@ exists(put(s,k,v), k)             = true
 k != k'  =>  exists(put(s,k,v), k') = exists(s, k')
 get(put(s,k,v), k) = v 
 k != k'  =>  get(put(s,k,v), k')    = get(s, k')
-```
+
 -- derived: distinct keys commute, same key overwrites
 k != k'  =>  put(put(s,k,v), k',v') = put(put(s,k',v'), k, v)
 (else)      put(put(s,k,v), k, v') = put(s, k, v')
+```
 
 #### Clients, as equations over the library: (Set)
 
@@ -195,10 +196,19 @@ The ghost state bit : Bool updates as follows:
 ⟨up? = ν⟩ :  ν = bit    -- the observation reports the counter
 ```
 
-### Challenges:
+#### Challenges:
 
 - The above ghost stuff to handle "up? rev F = ¬ up? F". This is the problematic part since the value it writes depends on what's already there (The observer is a function of it's previous value), and this type of pattern is non trivial to cover in translation. - worst case we assume no "observer-transforming" transitions
 
 - Need to make sure the algebra only denote regular languages (since regular algebra including the one in Hidden Algebra can express more) - or come up with an extention to the decision procedure(s).
 
 - The equality of two states here is Behavioural equality, ie observer cannot tell them apart, instead of something like "they were built the same way". But the backend is trace-based, which forces the property over histories(traces), which is closer to the second part(in quotes). An example of this would be from prev example in I_Set with ⟨put k1 a⟩.⟨put k1 a⟩ vs ⟨put k1 a⟩. Thus the final trace property must depend only on reached state even though it's written over event histories.
+
+
+### Ideal Specification Language:
+
+It needs to have:
+- Algebraic surface: The developer writes only a hidden-algebra-style signature, equational observer laws, and invariants as state predicates
+- Decision-procedure-ready output. The translation must emit, for a HAT-like backend, a symbolic-trace property carrying all needed symbolic event predicates and ghost variables, inside a decidable fragment. All this must be derived.
+
+
